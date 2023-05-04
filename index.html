@@ -7,7 +7,7 @@
     <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
     <link href="https://unpkg.com/jspsych@7.3.2/css/jspsych.css" rel="stylesheet" type="text/css" />
-    <script>const { ipcMain } = require('electron');</script>
+    <script>const { ipcRenderer } = require('electron');</script>
     <style>
     body {
     background-color: black;
@@ -69,14 +69,11 @@
     </form>
   `,
       on_load: function() {
-          // Prevent default form submission and start the experiment
           document.getElementById("participant-form").addEventListener("submit", (event) => {
               event.preventDefault();
               const participantId = document.getElementById("participant-id").value;
               const timePoint = document.getElementById("time-point").value;
               jsPsych.data.addProperties({ participant_id: participantId, time_point: timePoint });
-
-              // Start the experiment
               jsPsych.finishTrial();
           });
       },
@@ -133,7 +130,7 @@
           trial_data.start_time = new Date().getTime(); // Record the start time of the trial
       },
       on_finish: function (data) {
-          data.correct = data.key_press === " "; // Check if the spacebar (key code 32) was pressed
+          data.correct = data.key_press === 32; // Check if the spacebar (key code 32) was pressed
       }
   };
   
