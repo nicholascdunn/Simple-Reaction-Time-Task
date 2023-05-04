@@ -1,5 +1,7 @@
-const { app, BrowserWindow } = require('electron');
-const { ipcMain } = require('electron');
+const { app, ipcMain, BrowserWindow } = require('electron');
+const fs = require('fs');
+const path = require('path');
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
@@ -31,3 +33,29 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+ipcMain.on('saveDataCSV', (event, data) => {
+  const header = 'participant_id,time_point,trial,response_time,correct,start_time\n';
+  let csvContent = header;
+
+  data.forEach((row, index) => {
+    csvContent += row.participant_id + ',' + row.time_point + ',' + index + ',' + row.rt + ',' + row.correct + ',' + row.start_time + '\n';
+  });
+
+  const filename = 'data/' + data[0].participant_id + '_' + data[0].time_point + '.csv';
+  const filePath = path.join(__dirname, filename);
+  fs.writeFile(filePath, csvContent, 'utf8', (err) => {
+    if (err) {
+      console.error('Error writing CSV file:', err);
+    } else {
+      console.log('Data saved as', filePath);
+    }
+  });
+});
+
+
+
+
+
+
+

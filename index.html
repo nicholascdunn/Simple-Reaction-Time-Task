@@ -18,22 +18,7 @@
   <body></body>
   <script>
   function saveDataCSV(data) {
-      const fs = require('fs');
-      const header = 'participant_id,time_point,trial,response_time,correct,start_time\n';
-      let csvContent = header;
-
-      data.forEach((row, index) => {
-          csvContent += row.participant_id + ',' + row.time_point + ',' + index + ',' + row.rt + ',' + row.correct + ',' + row.start_time + '\n';
-      });
-
-      const filename = data[0].participant_id + '_' + data[0].time_point + '.csv';
-      fs.writeFile(filename, csvContent, 'utf8', (err) => {
-          if (err) {
-              console.error('Error writing CSV file:', err);
-          } else {
-              console.log('Data saved as', filename);
-          }
-      });
+      ipcRenderer.send('saveDataCSV', data);
   }
   
   var jsPsych = initJsPsych({
@@ -141,7 +126,7 @@
   var experiment_procedure = {
       timeline: [fixation, trial],
       timeline_variables: [target],
-      repetitions: 5
+      repetitions: 2
   };
   timeline.push(experiment_procedure);
   
@@ -155,6 +140,7 @@
           <p>Press any key to complete the experiment. Thank you!</p>`;
       },
       on_finish: function () {
+          jsPsych.data.displayData();
           ipcRenderer.send('closeApp');
       }
   };
