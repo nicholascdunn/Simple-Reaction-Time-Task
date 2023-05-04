@@ -1,58 +1,57 @@
-const { app, ipcMain, BrowserWindow } = require('electron');
+const {app, ipcMain, BrowserWindow} = require('electron');
 const fs = require('fs');
 const path = require('path');
 
 function createWindow() {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-  });
+    const win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
 
-  win.loadFile('index.html');
-  win.setFullScreen(true);
+    win.loadFile('index.html');
+    win.setFullScreen(true);
 }
 
 app.whenReady().then(createWindow);
-
+/*
 ipcMain.on('closeApp', () => {
-    mainWindow.close();
+    win.close();
 });
-
+*/
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
 app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
 });
 
 ipcMain.on('saveDataCSV', (event, data) => {
-  const header = 'participant_id,time_point,trial,response_time,correct,start_time\n';
-  let csvContent = header;
+    const header = 'participant_id,time_point,trial,response_time,correct,start_time\n';
+    let csvContent = header;
 
-  data.forEach((row, index) => {
-    csvContent += row.participant_id + ',' + row.time_point + ',' + index + ',' + row.rt + ',' + row.correct + ',' + row.start_time + '\n';
-  });
+    data.forEach((row, index) => {
+        csvContent += row.participant_id + ',' + row.time_point + ',' + index + ',' + row.rt + ',' + row.correct + ',' + row.start_time + '\n';
+    });
 
-  const filename = 'data/' + data[0].participant_id + '_' + data[0].time_point + '.csv';
-  const filePath = path.join(__dirname, filename);
-  fs.writeFile(filePath, csvContent, 'utf8', (err) => {
-    if (err) {
-      console.error('Error writing CSV file:', err);
-    } else {
-      console.log('Data saved as', filePath);
-    }
-  });
+    const filename = 'data/' + data[0].participant_id + '_' + data[0].time_point + '.csv';
+    const filePath = path.join(__dirname, filename);
+    fs.writeFile(filePath, csvContent, 'utf8', (err) => {
+        if (err) {
+            console.error('Error writing CSV file:', err);
+        } else {
+            console.log('Data saved as', filePath);
+        }
+    });
 });
-
 
 
 

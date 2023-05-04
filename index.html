@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Simple Reaction Time Task</title>
     <script src="https://unpkg.com/jspsych@7.3.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
-    <link href="https://unpkg.com/jspsych@7.3.2/css/jspsych.css" rel="stylesheet" type="text/css" />
-    <script>const { ipcRenderer } = require('electron');</script>
+    <link href="https://unpkg.com/jspsych@7.3.2/css/jspsych.css" rel="stylesheet" type="text/css"/>
+    <script>const {ipcRenderer} = require('electron');</script>
     <style>
-    body {
-    background-color: black;
-    color: white;
-    }
+        body {
+            background-color: black;
+            color: white;
+        }
     </style>
-  </head>
-  <body></body>
-  <script>
-  function saveDataCSV(data) {
-      ipcRenderer.send('saveDataCSV', data);
-  }
-  
-  var jsPsych = initJsPsych({
-      on_finish: function() {
-          const reactionTimeData = jsPsych.data.get().filter({ task: 'response' }).values();
-          const missedTrials = reactionTimeData.filter(trial => trial.rt === null).length;
-          const meanReactionTime = Math.round(reactionTimeData.filter(trial => trial.rt !== null).reduce((sum, trial) => sum + trial.rt, 0) / (reactionTimeData.length - missedTrials));
-          console.log('Number of missed trials:', missedTrials);
-          console.log('Mean reaction time:', meanReactionTime);
-          saveDataCSV(reactionTimeData);
-          jsPsych.data.displayData();
-      }
-  });
-  
-  var timeline = [];
-  
-  var preload = {
-      type: jsPsychPreload,
-      images: 'img/square.png'
-  };
-  timeline.push(preload);
-  
-  var participant_info = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: `
+</head>
+<body></body>
+<script>
+    function saveDataCSV(data) {
+        ipcRenderer.send('saveDataCSV', data);
+    }
+
+    var jsPsych = initJsPsych({
+        on_finish: function () {
+            const reactionTimeData = jsPsych.data.get().filter({task: 'response'}).values();
+            const missedTrials = reactionTimeData.filter(trial => trial.rt === null).length;
+            const meanReactionTime = Math.round(reactionTimeData.filter(trial => trial.rt !== null).reduce((sum, trial) => sum + trial.rt, 0) / (reactionTimeData.length - missedTrials));
+            console.log('Number of missed trials:', missedTrials);
+            console.log('Mean reaction time:', meanReactionTime);
+            saveDataCSV(reactionTimeData);
+            jsPsych.data.displayData();
+        }
+    });
+
+    var timeline = [];
+
+    var preload = {
+        type: jsPsychPreload,
+        images: 'img/square.png'
+    };
+    timeline.push(preload);
+
+    var participant_info = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
     <p>Please enter the participant's ID and the time point.</p>
     <form id="participant-form">
       <label for="participant-id">Participant ID:</label>
@@ -53,100 +53,99 @@
       <input type="submit" value="Submit">
     </form>
   `,
-      on_load: function() {
-          document.getElementById("participant-form").addEventListener("submit", (event) => {
-              event.preventDefault();
-              const participantId = document.getElementById("participant-id").value;
-              const timePoint = document.getElementById("time-point").value;
-              jsPsych.data.addProperties({ participant_id: participantId, time_point: timePoint });
-              jsPsych.finishTrial();
-          });
-      },
-      choices: 'NO_KEYS'
-  };
-  
-  timeline.push(participant_info);
-  
-  var welcome = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: 'Welcome to the Simple Reaction Time Task. Press any key to begin.'
-  };
-  
-  timeline.push(welcome);
-  
-  var instruction = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: `
+        on_load: function () {
+            document.getElementById("participant-form").addEventListener("submit", (event) => {
+                event.preventDefault();
+                const participantId = document.getElementById("participant-id").value;
+                const timePoint = document.getElementById("time-point").value;
+                jsPsych.data.addProperties({participant_id: participantId, time_point: timePoint});
+                jsPsych.finishTrial();
+            });
+        },
+        choices: 'NO_KEYS'
+    };
+
+    timeline.push(participant_info);
+
+    var welcome = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: 'Welcome to the Simple Reaction Time Task. Press any key to begin.'
+    };
+
+    timeline.push(welcome);
+
+    var instruction = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
       <p>In this task, a square will appear in the center of the screen.</p>
       <p>When the square appears, your task is to press the <strong>spacebar</strong>
       as fast as you can.</p>
       <p>Press any key to begin.</p>
       `,
-      post_trial_gap: 2000
-  };
-  
-  timeline.push(instruction);
-  
-  var target = {
-      stimulus: 'img/square.png'
-  };
-  
-  var fixation = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: "",
-      choices: 'NO_KEYS',
-      trial_duration: function(){
-          return jsPsych.randomization.sampleWithoutReplacement([2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000], 1)[0];
-      },
-      data: {
-          task: 'fixation'
-      }
-  };
-  
-  var trial = {
-      type: jsPsychImageKeyboardResponse,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      choices: 'ALL_KEYS',
-      trial_duration: 5000,
-      data: {
-          task: 'response'
-      },
-      on_start: function (trial_data) {
-          trial_data.start_time = new Date().getTime(); // Record the start time of the trial
-      },
-      on_finish: function (data) {
-          if(jsPsych.pluginAPI.compareKeys(data.response, ' ')){
-              data.correct = true;
-          } else {
-              data.correct = false;
-          }
-      }
-  };
-  
-  var experiment_procedure = {
-      timeline: [fixation, trial],
-      timeline_variables: [target],
-      repetitions: 2
-  };
-  timeline.push(experiment_procedure);
-  
-  var debrief_block = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: function(){
-          var trials = jsPsych.data.get().filter({task:'response'});
-          var rt = Math.round(trials.select('rt').mean());
-          
-          return `<p>Your average response time was ${rt}ms.</p>
-          <p>Press any key to complete the experiment. Thank you!</p>`;
-      },
-      on_finish: function () {
-          jsPsych.data.displayData();
-          ipcRenderer.send('closeApp');
-      }
-  };
-timeline.push(debrief_block);
+        post_trial_gap: 2000
+    };
 
-jsPsych.run(timeline);
+    timeline.push(instruction);
+
+    var target = {
+        stimulus: 'img/square.png'
+    };
+
+    var fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "",
+        choices: 'NO_KEYS',
+        trial_duration: function () {
+            return jsPsych.randomization.sampleWithoutReplacement([2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000], 1)[0];
+        },
+        data: {
+            task: 'fixation'
+        }
+    };
+
+    var trial = {
+        type: jsPsychImageKeyboardResponse,
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        choices: 'ALL_KEYS',
+        trial_duration: 5000,
+        data: {
+            task: 'response'
+        },
+        on_start: function (trial_data) {
+            trial_data.start_time = new Date().getTime(); // Record the start time of the trial
+        },
+        on_finish: function (data) {
+            if (jsPsych.pluginAPI.compareKeys(data.response, ' ')) {
+                data.correct = true;
+            } else {
+                data.correct = false;
+            }
+        }
+    };
+
+    var experiment_procedure = {
+        timeline: [fixation, trial],
+        timeline_variables: [target],
+        repetitions: 2
+    };
+    timeline.push(experiment_procedure);
+
+    var debrief_block = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: function () {
+            var trials = jsPsych.data.get().filter({task: 'response'});
+            var rt = Math.round(trials.select('rt').mean());
+
+            return `<p>Your average response time was ${rt}ms.</p>
+          <p>Press any key to complete the experiment. Thank you!</p>`;
+        },
+        on_finish: function () {
+            ipcRenderer.send('closeApp');
+        }
+    };
+    timeline.push(debrief_block);
+
+    jsPsych.run(timeline);
 </script>
 
 </html>
