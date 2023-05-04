@@ -2,11 +2,11 @@
 <html>
 <head>
     <title>Simple Reaction Time Task</title>
-    <script src="https://unpkg.com/jspsych@7.3.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
-    <link href="https://unpkg.com/jspsych@7.3.2/css/jspsych.css" rel="stylesheet" type="text/css"/>
+    <script src="assets/jspsych/jspsych.js"></script>
+    <script src="assets/jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="assets/jspsych/plugin-image-keyboard-response.js"></script>
+    <script src="assets/jspsych/plugin-preload.js"></script>
+    <link href="assets/jspsych/jspsych.css" rel="stylesheet" type="text/css"/>
     <script>const {ipcRenderer} = require('electron');</script>
     <style>
         body {
@@ -21,15 +21,27 @@
         ipcRenderer.send('saveDataCSV', data);
     }
 
+    let start_time;
+
     var jsPsych = initJsPsych({
         on_finish: function () {
             const reactionTimeData = jsPsych.data.get().filter({task: 'response'}).values();
+            const fixationData = jsPsych.data.get().filter({task: 'fixation'}).values();
+
             const missedTrials = reactionTimeData.filter(trial => trial.rt === null).length;
             const meanReactionTime = Math.round(reactionTimeData.filter(trial => trial.rt !== null).reduce((sum, trial) => sum + trial.rt, 0) / (reactionTimeData.length - missedTrials));
+
             console.log('Number of missed trials:', missedTrials);
             console.log('Mean reaction time:', meanReactionTime);
-            saveDataCSV(reactionTimeData);
-            jsPsych.data.displayData();
+
+            const combinedData = fixationData.map((fixation, index) => {
+                return {
+                    ...fixation,
+                    ...reactionTimeData[index]
+                };
+            });
+
+            saveDataCSV(combinedData);
         }
     });
 
@@ -37,7 +49,7 @@
 
     var preload = {
         type: jsPsychPreload,
-        images: 'img/square.png'
+        auto_preload: true
     };
     timeline.push(preload);
 
@@ -58,7 +70,12 @@
                 event.preventDefault();
                 const participantId = document.getElementById("participant-id").value;
                 const timePoint = document.getElementById("time-point").value;
-                jsPsych.data.addProperties({participant_id: participantId, time_point: timePoint});
+                const experimentStartTime = new Date().toISOString();
+                jsPsych.data.addProperties({
+                    participant_id: participantId,
+                    time_point: timePoint,
+                    experiment_start_time: experimentStartTime
+                });
                 jsPsych.finishTrial();
             });
         },
@@ -82,7 +99,10 @@
       as fast as you can.</p>
       <p>Press any key to begin.</p>
       `,
-        post_trial_gap: 2000
+        post_trial_gap: 2000,
+        on_finish: function () {
+            start_time = new Date().getTime(); // Set the start_time when the instruction trial finishes
+        }
     };
 
     timeline.push(instruction);
@@ -96,32 +116,39 @@
         stimulus: "",
         choices: 'NO_KEYS',
         trial_duration: function () {
-            return jsPsych.randomization.sampleWithoutReplacement([2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000], 1)[0];
+            // Store the ISI value for the current trial
+            fixation.isi = jsPsych.randomization.sampleWithoutReplacement([2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000], 1)[0];
+            return fixation.isi;
         },
         data: {
-            task: 'fixation'
+            task: 'fixation',
+            // Add the ISI value to the trial data
+            isi: function () {
+                return fixation.isi;
+            }
         }
     };
 
     var trial = {
         type: jsPsychImageKeyboardResponse,
         stimulus: jsPsych.timelineVariable('stimulus'),
-        choices: 'ALL_KEYS',
+        choices: [' '],
         trial_duration: 5000,
         data: {
-            task: 'response'
+            task: 'response',
+            stimulus_onset: null,
+            response_timestamp: null,
+            trial_duration: null // Add trial_duration field to data object
         },
-        on_start: function (trial_data) {
-            trial_data.start_time = new Date().getTime(); // Record the start time of the trial
+        on_start: function (trial) {
+            trial.data.stimulus_onset = new Date().getTime() - start_time; // Calculate elapsed time for stimulus_onset
         },
         on_finish: function (data) {
-            if (jsPsych.pluginAPI.compareKeys(data.response, ' ')) {
-                data.correct = true;
-            } else {
-                data.correct = false;
-            }
+            data.response_timestamp = new Date().getTime() - start_time; // Calculate elapsed time for response
+            data.trial_duration = data.response_timestamp - data.stimulus_onset; // Calculate trial_duration
         }
     };
+
 
     var experiment_procedure = {
         timeline: [fixation, trial],

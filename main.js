@@ -35,11 +35,11 @@ app.on('activate', () => {
 });
 
 ipcMain.on('saveDataCSV', (event, data) => {
-    const header = 'participant_id,time_point,trial,response_time,correct,start_time\n';
+    const header = 'participant_id,time_point,experiment_start_time,trial,isi,response_time,stimulus_onset,response_timestamp,trial_duration\n';
     let csvContent = header;
 
     data.forEach((row, index) => {
-        csvContent += row.participant_id + ',' + row.time_point + ',' + index + ',' + row.rt + ',' + row.correct + ',' + row.start_time + '\n';
+        csvContent += row.participant_id + ',' + row.time_point + ',' + row.experiment_start_time + ',' + (index + 1) + ',' + row.isi + ',' + row.rt + ',' + row.stimulus_onset + ',' + row.response_timestamp + ',' + row.trial_duration + '\n';
     });
 
     const filename = 'data/' + data[0].participant_id + '_' + data[0].time_point + '.csv';
