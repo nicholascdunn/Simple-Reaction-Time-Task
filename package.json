@@ -4,6 +4,7 @@
   "description": "A Simple Reaction Time (SRT) task built with electron and jsPsych for use in psychology research.",
   "main": "main.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Nick Dunn",
@@ -12,4 +13,3 @@
     "electron": "^24.1.3"
   }
 }
-.
