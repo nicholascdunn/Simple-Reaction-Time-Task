@@ -44,7 +44,7 @@
           console.log('Number of missed trials:', missedTrials);
           console.log('Mean reaction time:', meanReactionTime);
           saveDataCSV(reactionTimeData);
-          // jsPsych.data.displayData();
+          jsPsych.data.displayData();
       }
   });
   
@@ -130,7 +130,11 @@
           trial_data.start_time = new Date().getTime(); // Record the start time of the trial
       },
       on_finish: function (data) {
-          data.correct = data.key_press === 32; // Check if the spacebar (key code 32) was pressed
+          if(jsPsych.pluginAPI.compareKeys(data.response, ' ')){
+              data.correct = true;
+          } else {
+              data.correct = false;
+          }
       }
   };
   
