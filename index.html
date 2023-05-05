@@ -56,7 +56,7 @@
     var participant_info = {
         type: jsPsychHtmlKeyboardResponse,
         stimulus: `
-    <p>Please enter the participant's ID and the time point.</p>
+    <p style="font-size:48px;">Please enter the Participant's ID and the Time Point</p>
     <form id="participant-form">
       <label for="participant-id">Participant ID:</label>
       <input type="text" id="participant-id" name="participant-id" required><br><br>
@@ -86,7 +86,11 @@
 
     var welcome = {
         type: jsPsychHtmlKeyboardResponse,
-        stimulus: 'Welcome to the Simple Reaction Time Task. Press any key to begin.'
+        stimulus: `<p style="font-size:48px;">Welcome to the</p>
+        <p style="font-size:48px;">Simple Reaction Time Task</p><br><br>
+        <p><strong>Press spacebar to begin</strong></p>
+        `,
+        choices: " "
     };
 
     timeline.push(welcome);
@@ -95,21 +99,35 @@
         type: jsPsychHtmlKeyboardResponse,
         stimulus: `
       <p>In this task, a square will appear in the center of the screen.</p>
-      <p>When the square appears, your task is to press the <strong>spacebar</strong>
-      as fast as you can.</p>
-      <p>Press any key to begin.</p>
+      <p>Each time the sqaure appears, your task is to press the <strong>spacebar</strong>
+      as fast as you can.</p><br><br><br>
+      <p><strong>Press spacebar to begin</strong></p>
       `,
-        post_trial_gap: 2000,
+        choices: " "
+        //post_trial_gap: 2000,
+        //on_finish: function () {
+        //start_time = new Date().getTime(); // Set the start_time when the instruction trial finishes
+        //}
+    };
+
+    timeline.push(instruction);
+
+    var fixation_cross = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<div style="font-size: 60px;">+</div>',
+        choices: 'NO_KEYS',
+        trial_duration: 2000,
         on_finish: function () {
             start_time = new Date().getTime(); // Set the start_time when the instruction trial finishes
         }
     };
 
-    timeline.push(instruction);
+    timeline.push(fixation_cross);
 
     var target = {
         stimulus: 'img/square.png'
     };
+
 
     var fixation = {
         type: jsPsychHtmlKeyboardResponse,
@@ -122,7 +140,6 @@
         },
         data: {
             task: 'fixation',
-            // Add the ISI value to the trial data
             isi: function () {
                 return fixation.isi;
             }
@@ -138,14 +155,14 @@
             task: 'response',
             stimulus_onset: null,
             response_timestamp: null,
-            trial_duration: null // Add trial_duration field to data object
+            //trial_duration: null // Add trial_duration field to data object
         },
         on_start: function (trial) {
             trial.data.stimulus_onset = new Date().getTime() - start_time; // Calculate elapsed time for stimulus_onset
         },
         on_finish: function (data) {
             data.response_timestamp = new Date().getTime() - start_time; // Calculate elapsed time for response
-            data.trial_duration = data.response_timestamp - data.stimulus_onset; // Calculate trial_duration
+            //data.trial_duration = data.response_timestamp - data.stimulus_onset; // Calculate trial_duration
         }
     };
 
@@ -153,7 +170,7 @@
     var experiment_procedure = {
         timeline: [fixation, trial],
         timeline_variables: [target],
-        repetitions: 30
+        repetitions: 60
     };
     timeline.push(experiment_procedure);
 

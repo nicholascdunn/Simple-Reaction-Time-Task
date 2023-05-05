@@ -1,3 +1,0 @@
-participant_id,time_point,experiment_start_time,trial,isi,response_time,stimulus_onset,response_timestamp,trial_duration
-1200,T1,2023-05-04T23:36:44.604Z,1,2000,344,4010,4363,353
-1200,T1,2023-05-04T23:36:44.604Z,2,2000,439,6367,6807,440

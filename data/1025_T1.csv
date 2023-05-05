@@ -1,3 +1,0 @@
-participant_id,time_point,trial,isi,response_time,correct,start_time,button_presses
-1025,T1,0,2750,478,true,undefined,0
-1025,T1,1,4000,281,true,undefined,0

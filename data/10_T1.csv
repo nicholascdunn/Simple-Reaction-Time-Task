@@ -1,3 +1,0 @@
-participant_id,time_point,trial,isi,response_time,stimulus_onset,response_timestamp,trial_duration
-10,T1,1,3000,330,5011,5349,338
-10,T1,2,4000,295,9354,9651,297
