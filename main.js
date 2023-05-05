@@ -10,6 +10,7 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false,
         },
+        icon: '/assets/icons/stopwatchicon.png'
     });
 
     win.loadFile('index.html');
