@@ -1,7 +1,7 @@
 module.exports = {
     packagerConfig: {
         packagerConfig: {
-            icon: '/assets/icons' // no file extension required
+            icon: './assets/icons/icon' // no file extension required
         }
     },
     rebuildConfig: {},

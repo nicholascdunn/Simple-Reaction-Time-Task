@@ -35,15 +35,22 @@ app.on('activate', () => {
     }
 });
 
+
 ipcMain.on('saveDataCSV', (event, data) => {
     const header = 'participant_id,time_point,experiment_start_time,trial,isi,response_time,stimulus_onset,response_timestamp\n';
     let csvContent = header;
 
     data.forEach((row, index) => {
-        csvContent += row.participant_id + ',' + row.time_point + ',' + row.experiment_start_time + ',' + (index + 1) + ',' + row.isi + ',' + row.rt + ',' + row.stimulus_onset + ',' + row.response_timestamp + ',' + '\n';
+        csvContent += row.participant_id + ',' + row.time_point + ',' + row.experiment_start_time + ',' + (index + 1) + ',' + row.isi + ',' + row.rt + ',' + row.stimulus_onset + ',' + row.response_timestamp + '\n';
     });
 
-    const filename = 'data/' + data[0].participant_id + '_' + data[0].time_point + '.csv';
+    const dataFolder = 'data';
+    const dataFolderPath = path.join(__dirname, dataFolder);
+    if (!fs.existsSync(dataFolderPath)) {
+        fs.mkdirSync(dataFolderPath);
+    }
+
+    const filename = dataFolder + '/' + data[0].participant_id + '_' + data[0].time_point + '.csv';
     const filePath = path.join(__dirname, filename);
     fs.writeFile(filePath, csvContent, 'utf8', (err) => {
         if (err) {
@@ -53,7 +60,6 @@ ipcMain.on('saveDataCSV', (event, data) => {
         }
     });
 });
-
 
 
 

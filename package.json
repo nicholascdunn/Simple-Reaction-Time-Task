@@ -7,7 +7,21 @@
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.example.yourappid",
+    "mac": {
+      "icon": "assets/icons/icon.icns"
+    },
+    "win": {
+      "icon": "assets/icons/icon.ico"
+    },
+    "linux": {
+      "icon": "assets/icons/icon.png"
+    }
   },
   "author": "Nick Dunn",
   "license": "MIT",
