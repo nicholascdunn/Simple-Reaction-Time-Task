@@ -8,7 +8,11 @@ module.exports = {
     makers: [
         {
             name: '@electron-forge/maker-squirrel',
-            config: {},
+            config: {
+              name: 'Turbo Tap Time',
+              authors: 'Nicholas Dunn',
+              description: 'A simple reaction time task for use in psychology research.'
+              },
         },
         {
             name: '@electron-forge/maker-zip',
