@@ -1,8 +1,8 @@
 const {app, ipcMain, BrowserWindow, globalShortcut} = require('electron');
 const fs = require('fs');
 const path = require('path');
-const { format, parseISO } = require('date-fns');
-const { utcToZonedTime } = require('date-fns-tz');
+const {format, parseISO} = require('date-fns');
+const {utcToZonedTime} = require('date-fns-tz');
 
 let win;
 
@@ -63,8 +63,9 @@ ipcMain.on('saveDataCSV', (event, data) => {
     data.forEach((row, index) => {
         let start_time_conv = convertTimestamp(row.experiment_start_time);
         let trial_timestamp_conv = convertTimestamp(row.timestamp);
+        let rowTimePoint = row.time_point.slice(1);
 
-        csvContent += row.participant_id + ',' + row.time_point + ',' + row.experiment_start_time + ',' + start_time_conv + ',' + row.block + ',' + (index + 1) + ',' + row.timestamp + ',' + trial_timestamp_conv + ',' + row.isi + ',' + row.rt + ',' + row.stimulus_onset + ',' + row.response_timestamp + '\n';
+        csvContent += row.participant_id + ',' + rowTimePoint + ',' + row.experiment_start_time + ',' + start_time_conv + ',' + row.block + ',' + (index + 1) + ',' + row.timestamp + ',' + trial_timestamp_conv + ',' + row.isi + ',' + row.rt + ',' + row.stimulus_onset + ',' + row.response_timestamp + '\n';
     });
 
     const dataFolderPath = path.join(app.getPath('documents'), 'Turbo Tap Time', 'data');
@@ -93,7 +94,7 @@ function createDataDirectory() {
 
 function convertTimestamp(isoTimestamp, timeZone = 'America/New_York') {
     const date = utcToZonedTime(parseISO(isoTimestamp), timeZone);
-    return format(date, 'yyyy MMM dd HH:mm:ss', { timeZone });
+    return format(date, 'yyyy MMM dd HH:mm:ss', {timeZone});
 }
 
 

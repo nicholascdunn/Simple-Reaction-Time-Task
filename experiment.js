@@ -52,8 +52,27 @@ var participant_info = {
     on_load: function () {
         document.getElementById("participant-form").addEventListener("submit", (event) => {
             event.preventDefault();
-            const participantId = document.getElementById("participant-id").value;
-            timePoint = document.getElementById("time-point").value;
+            let participantId = document.getElementById("participant-id").value;
+            let timePoint = document.getElementById("time-point").value;
+
+            // Remove non-numeric characters from participantId
+            participantId = participantId.replace(/[^0-9]/g, '');
+
+            // Remove non-numeric characters from timePoint
+            timePoint = timePoint.replace(/[^0-9]/g, '');
+
+            if (participantId === '' || timePoint === '') {
+                alert('Please provide valid inputs for both Participant ID and Time Point.');
+                return;
+            }
+
+            if (!/^[0-9]+$/.test(timePoint)) {
+                alert('Please enter only numbers for the Time Point.');
+                return;
+            }
+            timePoint = 'T' + timePoint; // append 'T' to time point
+
+
             const experimentStartTime = new Date().toISOString();
             jsPsych.data.addProperties({
                 participant_id: participantId,
@@ -124,7 +143,7 @@ var practice_trial = {
     },
     on_start: function (trial) {
         trial.data.stimulus_onset = new Date().getTime() - start_time; // Calculate elapsed time for stimulus_onset
-        
+
     },
     on_finish: function (data) {
         data.response_timestamp = new Date().getTime() - start_time; // Calculate elapsed time for response
@@ -271,7 +290,7 @@ ipcRenderer.on('requestSaveData', () => {
             ...reactionTimeData[index]
         };
     });
-    
+
     ipcRenderer.send('saveDataCSV', combinedData);
 
     // After saving data, request the main process to close the application
