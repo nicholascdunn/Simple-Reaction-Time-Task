@@ -14,11 +14,12 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false,
         },
-        icon: '/assets/icons/stopwatchicon.png'
+        icon: '/assets/icons/icon.png'
     });
 
     win.loadFile('index.html');
     win.setFullScreen(true);
+    win.setMenuBarVisibility(false);
 }
 
 app.whenReady().then(() => {
