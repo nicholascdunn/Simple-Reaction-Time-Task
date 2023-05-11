@@ -121,8 +121,8 @@ var practice_instruction2 = {
         <p>Great job!</p><br>
         <p>Now you are ready to play the real game. Remember...</p>
         <p>Each time the square appears, your task is to press the
-        <strong>spacebar</strong> as fast as you can.</p><br>
-        <p>Are you ready?</p><br><br>
+        <strong>spacebar</strong> as fast as you can.</p>
+        <p>Are you ready?</p><br>
         <p><strong>Press spacebar to begin</strong></p>
         `,
     choices: " ",
@@ -229,13 +229,13 @@ var trial = {
 var practice_procedure = {
     timeline: [fixation, practice_trial],
     timeline_variables: [target],
-    repetitions: 1
+    repetitions: 8
 };
 
 var experiment_procedure = {
     timeline: [fixation, trial],
     timeline_variables: [target],
-    repetitions: 3
+    repetitions: 120
 };
 
 var practice_procedure_wrapper = {
