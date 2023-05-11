@@ -2,7 +2,7 @@
     "name": "turbo-tap-time",
     "productName": "Turbo Tap Time",
     "version": "1.0.0",
-    "description": "A Simple Reaction Time (SRT) task built with electron and jsPsych for use in psychology research.",
+    "description": "Turbo Tap Time",
     "main": "main.js",
     "scripts": {
         "start": "electron-forge start",

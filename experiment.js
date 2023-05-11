@@ -105,7 +105,7 @@ var practice_instruction1 = {
       <p>In this game, a square will appear in the center of the screen.</p>
       <p>Each time the square appears, your task is to press the <strong>spacebar</strong>
       as fast as you can.</p>
-      <p>Let's play a practice round!</p><br><br>
+      <p>Let's try a practice round!</p><br><br>
       <p><strong>Press spacebar to begin</strong></p>
       `,
     choices: " ",
@@ -122,7 +122,7 @@ var practice_instruction2 = {
         <p>Now you are ready to play the real game. Remember...</p>
         <p>Each time the square appears, your task is to press the
         <strong>spacebar</strong> as fast as you can.</p>
-        <p>Are you ready?</p><br>
+        <p>Are you ready to play the game?</p><br>
         <p><strong>Press spacebar to begin</strong></p>
         `,
     choices: " ",
