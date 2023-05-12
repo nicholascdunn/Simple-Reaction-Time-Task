@@ -1,8 +1,8 @@
 {
-    "name": "turbo-tap-time",
-    "productName": "Turbo Tap Time",
+    "name": "turbo-tap",
+    "productName": "Turbo Tap",
     "version": "1.0.0",
-    "description": "Turbo Tap Time",
+    "description": "Turbo Tap",
     "main": "main.js",
     "scripts": {
         "start": "electron-forge start",

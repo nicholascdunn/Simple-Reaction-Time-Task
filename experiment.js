@@ -90,7 +90,7 @@ timeline.push(participant_info);
 var welcome = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `<p style="font-size:48px;">Welcome to</p>
-        <p style="font-size:60px;">Turbo Tap Time</p><br><br>
+        <p style="font-size:60px;">Turbo Tap</p><br><br>
         <p><strong>Press spacebar to begin</strong></p>
         `,
     choices: " ",
@@ -103,7 +103,7 @@ var practice_instruction1 = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
       <p>In this game, a square will appear in the center of the screen.</p>
-      <p>Each time the square appears, your task is to press the <strong>spacebar</strong>
+      <p>Each time the square appears, press the <strong>spacebar</strong>
       as fast as you can.</p>
       <p>Let's try a practice round!</p><br><br>
       <p><strong>Press spacebar to begin</strong></p>
@@ -120,7 +120,7 @@ var practice_instruction2 = {
     stimulus: `
         <p>Great job!</p><br>
         <p>Now you are ready to play the real game. Remember...</p>
-        <p>Each time the square appears, your task is to press the
+        <p>Each time the square appears, press the
         <strong>spacebar</strong> as fast as you can.</p>
         <p>Are you ready to play the game?</p><br>
         <p><strong>Press spacebar to begin</strong></p>
@@ -155,7 +155,7 @@ var instruction = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
       <p>In this game, a square will appear in the center of the screen.</p>
-      <p>Each time the square appears, your task is to press the <strong>spacebar</strong>
+      <p>Each time the square appears, press the <strong>spacebar</strong>
       as fast as you can.</p>
       <p>Are you ready to play the game?</p><br><br>
       <p><strong>Press spacebar to begin</strong></p>
@@ -268,7 +268,7 @@ var debrief_block = {
         // var rt = Math.round(trials.select('rt').mean());
 
         // return `<p>Your average response time was ${rt}ms.</p>
-        return `<p style="font-size:48px;">Thank you for playing Turbo Tap Time!</p><br><br>
+        return `<p style="font-size:48px;">Thank you for playing Turbo Tap!</p><br><br>
             <p>Press any key to close the game</p>`;
     },
     trial_duration: 5000,
